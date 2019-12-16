@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <span>메시지: {{ msg }}</span>
+      <br />
+      <span v-once>다시는 변경하지 않습니다: {{ msg }}</span>
+      <br />
+      <p>Using mustaches: {{ rawHtml }}</p>
+      <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+      <div v-bind:id="dynamicId"></div>
+      <button v-bind:disabled="isButtonDisabled">Button</button>
+      {{ number + 1 }} {{ ok ? 'YES' : 'NO' }} {{
+      message.split('').reverse().join('') }}
+      <div v-bind:id="'list-' + id">{{id}}</div>
+      <p v-if="seen">이제 나를 볼 수 있어요</p>
+      <a v-bind:href="url">URL here</a>
+      <br />
+      <a v-on:click="doSomething">Do something</a>
+      <br />
+      <a v-bind:[attributeName]="url">URL here</a>
+      <br />
+      <a v-on:[eventName]="doSomething">Do something</a>
+      <br />
+      <form v-on:submit.prevent="onSubmit">
+        <input v-model="a" />
+      </form>
+      <a v-bind:href="url">약어 없음</a>
+      <br />
+      <a :href="url">:href</a>
+      <br />
+      <a :[key]="url">:[key]</a>
+      <br />
+      <a v-on:click="doSomething">약어 없음</a>
+      <br />
+      <a @click="doSomething">@click</a>
+      <br />
+      <a @[event]="doSomething">@[event]</a>
+      <br />
+    </div>
+  </body>
+  <script>
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        msg: "월요일",
+        rawHtml: `<span style="color: aqua;">여기는 html</span>`,
+        dynamicId: `isDiv`,
+        isButtonDisabled: true,
+        number: 6,
+        ok: false,
+        message: "123456789!",
+        id: "map1",
+        seen: false,
+        url: "http://naver.com",
+        attributename: "href", // camelcase
+        eventname: "click",
+        a: "12",
+        key: "href",
+        event: "click"
+      },
+      methods: {
+        doSomething: function() {
+          alert("123");
+        },
+        onSubmit: function() {
+          alert("submit!");
+        }
+      }
+    });
+  </script>
+</html>
