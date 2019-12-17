@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div v-bind:class="{ active: isActive }">첫번째 DIV</div>
+      <div
+        class="static"
+        v-bind:class="{ active: isActive, 'text-danger': hasError }"
+      >
+        두번째 DIV
+      </div>
+      <div v-bind:class="classObject">세번째 DIV</div>
+      <div v-bind:class="classObject2">네번재 DIV</div>
+      <div>{{fullName}}</div>
+      <div v-bind:class="[activeClass, errorClass]">여섯번째 DIV</div>
+      <div v-bind:class="[isActive ? activeClass : '', errorClass]">
+        일곱번째 DIV
+      </div>
+      <div v-bind:class="[{ active: isActive }, errorClass]">여덞번째 DIV</div>
+      <my-component class="baz boo"></my-component>
+      <my-component v-bind:class="{ active: isActive }"></my-component>
+      <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">아홉번째 DIV</div>
+      <div v-bind:style="styleObject">열번째 DIV</div>
+      <div v-bind:style="[baseStyles, overridingStyles]">열한번재 DIV</div>
+      <div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">열두번째 DIV</div>
+    </div>
+  </body>
+  <script>
+    <!-- component 등록이 먼저 되지않는 경우 에러가 난다. -->
+    Vue.component('my-component', {
+        template: '<p class="foo bar">Hi</p>'
+      })
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        isActive: true,
+        hasError: false,
+        classObject: {
+          active: true,
+          "text-danger": false
+        },
+        error: null,
+        firstName: "first",
+        lastName: "last",
+        fullName: this.firstName + " " + this.lastName,
+        activeClass: "active",
+        errorClass: "text-danger",
+        activeColor: 'red',
+        fontSize: 30,
+        styleObject: {
+            color: "pink",
+            fontSize: '25px'
+        },
+        baseStyles: {
+            color: "cornflowerblue",
+            fontSize: '30px'
+        },
+        overridingStyles: {
+            color: "cadetblue",
+            textIndent: "20%" // text-indent camelCase이어야 적용 가능
+        }
+      },
+      computed: {
+        classObject2: function() {
+          return {
+            active: this.isActive && !this.error,
+            "text-danger": this.error && this.error.type === "fatal"
+          };
+        }
+      }
+    });
+    
+  </script>
+  <style>
+    .active {
+      color: cornflowerblue;
+    }
+    .text-danger {
+      color: cadetblue;
+    }
+    .baz {
+        color:chartreuse
+    }
+
+    div {
+      color: blue;
+    }
+  </style>
+</html>
