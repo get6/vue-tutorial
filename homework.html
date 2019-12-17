@@ -8,26 +8,39 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <span>일반 테이블</span>
+      <table>
+        <tr v-for="item in groceryList">
+          <td>{{item.text}}</td>
+        </tr>
+      </table>
+
+      <br />
+      <span>템플릿 테이블</span>
+      <table>
+        <todo-table v-for="item in groceryList" :todo="item" :key="item.id">
+        </todo-table>
+      </table>
+    </div>
   </body>
   <script>
     Vue.component("todo-table", {
-      prop: ["hsj-todo"],
-      template: "<table></table>"
+      props: ["todo"],
+      template: "<tr><td>{{todo.text}}</td></tr>"
     });
-    
+
     var vm = new Vue({
       el: "#app",
       data: {
         groceryList: []
-      },
-      render: h => console.log(h)
+      }
+      //render: h => console.log(h)
     });
     vm.groceryList = [
       { id: 0, text: "Vegetables" },
       { id: 1, text: "Cheese" },
       { id: 2, text: "Whatever else humans are supposed to eat" }
     ];
-    
   </script>
 </html>
