@@ -8,65 +8,62 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-    <div id="app">
-      <h1 v-if="ok">Yes</h1>
-      <h1 v-else>No</h1>
-      <template v-if="ok">
-        <h1>Title</h1>
-        <p>Paragraph 1</p>
-        <p>Paragraph 2</p>
-        <div v-if="Math.random() > 0.5">
-          이제 나를 볼 수 있어요
-        </div>
-        <div v-else>
-          이제는 안보입니다
-        </div>
-      </template>
-      <div v-if="type === 'A'">
-        A
-      </div>
-      <div v-else-if="type === 'B'">
-        B
-      </div>
-      <div v-else-if="type === 'C'">
-        C
-      </div>
-      <div v-else>
-        Not A/B/C
-      </div>
-      <template v-if="loginType === 'username'">
-        <label>사용자 이름</label>
-        <input placeholder="사용자 이름을 입력하세요" />
-      </template>
-      <template v-else>
-        <label>이메일</label>
-        <input placeholder="이메일 주소를 입력하세요" />
-      </template>
-      <br />
-      <template v-if="loginType === 'username'">
-        <label>사용자 이름</label>
-        <input placeholder="사용자 이름을 입력하세요" key="username-input" />
-      </template>
-      <template v-else>
-        <label>이메일</label>
-        <input placeholder="이메일 주소를 입력하세요" key="email-input" />
-      </template>
-      <br />
-      <!-- v-show는 <template> 구문을 지원하지 않으며 v-else와도 작동하지 않습니다. -->
-      <h1 v-show="ok">안녕하세요!</h1>
-      <template v-show="ok">
-        <input placeholder="사라지지 않는 input" />
-      </template>
-      <!-- 일반적으로 v-if는 토글 비용이 높고 v-show는 초기 렌더링 비용이 더 높습니다. 매우 자주 바꾸기를 원한다면 v-show를, 런타임 시 조건이 바뀌지 않으면 v-if를 권장합니다. -->
+    <ul id="example-1">
+      <li v-for="item in items">
+        {{ item.message }}
+      </li>
+    </ul>
+    <ul id="example-2">
+      <li v-for="(item, index) in items">
+        {{ parentMessage }} - {{ index }} - {{ item.message }}
+      </li>
+    </ul>
+    <div id="v-for-object" class="demo">
+      <ul>
+        <li v-for="value in object">
+          {{ value }}
+        </li>
+      </ul>
+      <label>(value, name) in object</label>
+      <ul>
+        <li v-for="(value, name) in object">
+          {{ name }}: {{ value }}
+        </li>
+      </ul>
+      <label>(value, name, index) in object</label>
+      <ul>
+        <li v-for="(value, name, index) in object">
+          {{ index }}. {{ name }}: {{ value }}
+        </li>
+      </ul>
     </div>
+    <p>
+      객체를 반복할 때 순서는 Object.keys()의 키 나열 순서에 따라 결정됩니다. 이
+      순서는 JavaScript 엔진 구현간에 일관적이지는 않습니다.
+    </p>
   </body>
   <script>
-    var vm = new Vue({
-      el: "#app",
+    var example1 = new Vue({
+      el: "#example-1",
       data: {
-        ok: true,
-        type: "A",
-        loginType: "username"
+        items: [{ message: "Foo" }, { message: "Bar" }]
+      }
+    });
+    var example2 = new Vue({
+      el: "#example-2",
+      data: {
+        parentMessage: "Parent",
+        items: [{ message: "Foo" }, { message: "Bar" }]
+      }
+    });
+    new Vue({
+      el: "#v-for-object",
+      data: {
+        object: {
+          title: "How to do lists in Vue",
+          author: "Jane Doe",
+          publishedAt: "2016-04-10"
+        }
       }
     });
   </script>
