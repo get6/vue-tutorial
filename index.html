@@ -8,52 +8,51 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-    <div id="app">
-      <input v-model="message" placeholder="여기를 수정해보세요" />
-      <p>메시지: {{ message }}</p>
-      <span>여러 줄을 가지는 메시지:</span>
-      <p style="white-space: pre-line">{{ message }}</p>
-      <br />
-      <textarea
-        v-model="message"
-        placeholder="여러줄을 입력해보세요"
-      ></textarea>
-      <textarea>{{ message }}</textarea>
-      <input type="checkbox" id="checkbox" v-model="checked" />
-      <label for="checkbox">{{ checked }}</label>
+    <div id="some-element">
+      <my-component></my-component>
     </div>
-    <div id="example-3">
-      <input type="checkbox" id="jack" value="Jack" v-model="checkedNames" />
-      <label for="jack">Jack</label>
-      <input type="checkbox" id="john" value="John" v-model="checkedNames" />
-      <label for="john">John</label>
-      <input type="checkbox" id="mike" value="Mike" v-model="checkedNames" />
-      <label for="mike">Mike</label>
-      <br />
-      <span>체크한 이름: {{ checkedNames }}</span>
-      <br />
-      <input type="radio" id="one" value="One" v-model="picked" />
-      <label for="one">One</label>
-      <br />
-      <input type="radio" id="two" value="Two" v-model="picked" />
-      <label for="two">Two</label>
-      <br />
-      <span>선택: {{ picked }}</span>
+    <div id="example">
+      <my-component></my-component>
+      <table>
+        <tr is="my-row" :test="test"></tr>
+      </table>
+
+      <table>
+        <my-row :test="test"></my-row>
+      </table>
     </div>
   </body>
   <script>
-    var vm = new Vue({
-      el: "#app",
-      data: {
-        message: "하하",
-        checked: true
-      }
+    var Child = {
+      // 해당 범위에서만
+      template: "<div>사용자 정의 컴포넌트 입니다!</div>"
+    };
+    // 등록
+    Vue.component("my-component", {
+      // 전역 등록
+      template: "<div>사용자 정의 컴포넌트 입니다!</div>"
     });
     new Vue({
-      el: "#example-3",
+      el: "#some-element",
+      components: {
+        // <my-component> 는 상위 템플릿에서만 사용할 수 있습니다.
+        "my-component": Child
+      }
+      // 옵션
+    });
+    // 루트 인스턴스 생성
+    new Vue({
+      el: "#example",
+      components: {
+        "my-row": {
+          props: ["test"],
+          template: `<tr><td>{{test.text}}</td></tr>`
+        }
+      },
       data: {
-        checkedNames: [],
-        picked: ""
+        test: {
+          text: "텍스트"
+        }
       }
     });
   </script>
