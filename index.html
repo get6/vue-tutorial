@@ -20,6 +20,22 @@
       <table>
         <my-row :test="test"></my-row>
       </table>
+      <simple-counter></simple-counter>
+      <simple-counter></simple-counter>
+      <simple-counter></simple-counter>
+      <br />
+      <child message="안녕하세요!"></child>
+      <div>
+        <input v-model="parentMsg" />
+        <br />
+        <child v-bind:my-message="parentMsg"></child>
+        <br />
+        <child :my-message="parentMsg"></child>
+      </div>
+    </div>
+    <div id="example2">
+      <counter-comp></counter-comp>
+      <example prop-c="Hi"></example>
     </div>
   </body>
   <script>
@@ -30,7 +46,43 @@
     // 등록
     Vue.component("my-component", {
       // 전역 등록
-      template: "<div>사용자 정의 컴포넌트 입니다!</div>"
+      template: "<span>{{ message }}</span>",
+      data: function() {
+        return {
+          message: "hello"
+        };
+      }
+    });
+    Vue.component("simple-counter", {
+      template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+      // 데이터는 기술적으로 함수이므로 Vue는 따지지 않지만
+      // 각 컴포넌트 인스턴스에 대해 같은 객체 참조를 반환합니다.
+      data: function() {
+        return { counter: 0 };
+      }
+    });
+    Vue.component("child", {
+      // props 정의
+      props: ["message", "my-message"],
+      // 데이터와 마찬가지로 prop은 템플릿 내부에서 사용할 수 있으며
+      // vm의 this.message로 사용할 수 있습니다.
+      template: "<span>{{ myMessage }}</span>"
+    });
+    initialCounter = {
+      text: "h2",
+      name: "Veronica",
+      company: "Veridian Dynamics"
+    };
+    Vue.component("counter-comp", {
+      data: function() {
+        return {
+          counter: initialCounter
+          //   text: "h1",
+          //   name: "Veronica",
+          //   company: "Veridian Dynamics"
+        };
+      },
+      template: "<div>{{ counter.text }}</div>"
     });
     new Vue({
       el: "#some-element",
@@ -41,7 +93,7 @@
       // 옵션
     });
     // 루트 인스턴스 생성
-    new Vue({
+    var vm = new Vue({
       el: "#example",
       components: {
         "my-row": {
@@ -52,6 +104,50 @@
       data: {
         test: {
           text: "텍스트"
+        },
+        parentMsg: "메세지~"
+      }
+    });
+    Vue.component("example", {
+      props: {
+        // 기본 타입 확인 (`null` 은 어떤 타입이든 가능하다는 뜻입니다)
+        propA: Number,
+        // 여러개의 가능한 타입
+        propB: [String, Number],
+        // 문자열이며 꼭 필요합니다
+        propC: {
+          type: String,
+          required: true
+        },
+        // 숫자이며 기본 값을 가집니다
+        propD: {
+          type: Number,
+          default: 100
+        },
+        // 객체/배열의 기본값은 팩토리 함수에서 반환 되어야 합니다.
+        propE: {
+          type: Object,
+          default: function() {
+            return { message: "hello" };
+          }
+        },
+        // 사용자 정의 유효성 검사 가능
+        propF: {
+          validator: function(value) {
+            return value > 10;
+          }
+        }
+      },
+      // data: function() {
+      //   return { propC: "12" };
+      // },
+      template: "<div>{{ propE.message }}</div>"
+    });
+    var vm = new Vue({
+      el: "#example2",
+      data: {
+        counterObj: {
+          text: "hi"
         }
       }
     });
