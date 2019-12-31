@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>
+
+            <span>{{ folder.name }}</span>
+            <tree-folder-contents :children="folder.children" />
+        </p>
+        <my-component>아래와는 다릅니다.</my-component>
+        <my-component inline-template>
+            <div>
+                <p>이것은 컴포넌트의 자체 템플릿으로 컴파일됩니다.</p>
+                <p>부모가 만들어낸 내용이 아닙니다.</p>
+            </div>
+        </my-component>
+        <hello-world></hello-world>
+        <terms-of-service></terms-of-service>
+    </div>
+</body>
+<script type="text/x-template" id="hello-world-template">
+    <!-- 사용하는곳보다 아래에 있으면 에러 -->
+<p>Hello hello hello</p>
+</script>
+<script>
+    Vue.component("tree-folder-contents", {
+        template: `<ul>
+                    <li v-for="child in children">
+                        <tree-folder v-if="child.children" :folder="child"/>
+                        <span v-else>{{ child.name }}</span>
+                    </li>
+                    </ul>`,
+        props: ["children"],
+        beforeCreate: function () {
+            //this.$options.components.TreeFolderContents = require('./tree-folder-contents.vue')
+            console.log(this)
+        }
+
+    });
+    Vue.component("my-component", {
+        template: `<h3>My Component</h3>`
+    });
+    Vue.component('hello-world', {
+        template: '#hello-world-template'
+    })
+    Vue.component('terms-of-service', {
+        template: '\
+    <div v-once>\
+      <h1>Terms of Service</h1>\
+      ... a lot of static content ...\
+    </div>\
+  '
+    })
+    var vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                folder: {
+                    name: "이름",
+                    children: [
+                        {
+                            name: "애기1"
+                        },
+                        {
+                            name: "애기2"
+                        }
+                        , {
+                            name: "애기3"
+                        }
+                    ]
+                }
+            }
+        }
+    })
+</script>
+
+</html>
