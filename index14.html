@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <blog-post :postTitle="title">인식 못함</blog-post>
+        <blog-post :post-title="title">인식함</blog-post>
+        <blog-post post-title="hello!">인식함</blog-post>
+    </div>
+    <hr>
+    <div id="app2">
+        <blog-post title="My journey with Vue"></blog-post>
+        <!-- Dynamically assign the value of a variable -->
+        <blog-post v-bind:title="post.title"></blog-post>
+
+        <!-- Dynamically assign the value of a complex expression -->
+        <blog-post v-bind:title="post.title + ' by ' + post.author.name"></blog-post>
+    </div>
+    <hr>
+    <div id="app3">
+        <!-- Even though `42` is static, we need v-bind to tell Vue that -->
+        <!-- this is a JavaScript expression rather than a string.       -->
+        <blog-post v-bind:likes="42"></blog-post>
+
+        <!-- Dynamically assign to the value of a variable. -->
+        <blog-post v-bind:likes="post.likes"></blog-post>
+    </div>
+    <hr>
+    <div id="app4">
+        <!-- Including the prop with no value will imply `true`. -->
+        <blog-post is-published>Hi</blog-post>
+
+        <!-- Even though `false` is static, we need v-bind to tell Vue that -->
+        <!-- this is a JavaScript expression rather than a string.          -->
+        <blog-post v-bind:is-published="false"></blog-post>
+
+        <!-- Dynamically assign to the value of a variable. -->
+        <blog-post v-bind:is-published="post.isPublished"></blog-post>
+    </div>
+    <hr>
+    <div id="app5">
+        <!-- Even though the array is static, we need v-bind to tell Vue that -->
+        <!-- this is a JavaScript expression rather than a string.            -->
+        <blog-post v-bind:comment-ids="[234, 266, 273]"></blog-post>
+
+        <!-- Dynamically assign to the value of a variable. -->
+        <blog-post v-bind:comment-ids="post.commentIds"></blog-post>
+    </div>
+    <hr>
+    <div id="app6">
+        <!-- Even though the object is static, we need v-bind to tell Vue that -->
+        <!-- this is a JavaScript expression rather than a string.             -->
+        <blog-post v-bind:author="{
+            name: 'Veronica',
+            company: 'Veridian Dynamics'
+          }"></blog-post>
+
+        <!-- Dynamically assign to the value of a variable. -->
+        <blog-post v-bind:author="post.author"></blog-post>
+    </div>
+    <hr>
+    <div id="app7">
+        <blog-post v-bind="post"></blog-post>
+    </div>
+    <hr>
+    <div id="app8">
+        <my-component prop-c="1"></my-component>
+        <blog-post :author="{ firstName: '성준', lastName: '황'}"></blog-post>
+        <!-- 정적 선언 값 자체를 보거나 data를 본다 -->
+        <base-input label="hi" value="you"></base-input>
+        <br>
+        <!-- 동적 선언 해당 ROOT에 data를 본다 -->
+        <base-input :label="hi" :value="you"></base-input>
+
+        <base-input v-model="username" required placeholder="Enter your username"></base-input>
+    </div>
+    <hr>
+</body>
+<script>
+    var blogPost = {
+        // camelCase in JavaScript
+        props: {
+            title: String,
+            likes: Number,
+            isPublished: Boolean,
+            commentIds: Array,
+            author: Object,
+            callback: Function,
+            contactsPromise: Promise, // or any other constructor
+            postTitle: String
+        },
+        //template: '<h3>{{ postTitle }}</h3>'
+    }
+    //Vue.component('blog-post', blogPost);
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                title: "Hi",
+
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3>{{ postTitle }}</h3>`
+            }
+        }
+    })
+    new Vue({
+        el: "#app2",
+        data() {
+            return {
+                post: {
+                    title: "제목",
+                    author: {
+                        name: "이름",
+
+                    },
+                }
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3>{{ title }}</h3>`
+            }
+        }
+    })
+    new Vue({
+        el: "#app3",
+        data() {
+            return {
+                likes: 42,
+                post: {
+                    likes: 50
+                },
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3>{{ likes }}</h3>`
+            }
+        },
+    })
+    new Vue({
+        el: "#app4",
+        data() {
+            return {
+                isPublished: true,
+                post: {
+                    isPublished: true
+                },
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3 v-if="isPublished">{{ isPublished }}</h3>`
+            }
+        },
+    })
+    new Vue({
+        el: "#app5",
+        data() {
+            return {
+                post: {
+                    commentIds: [334, 366, 373]
+                },
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3>{{ commentIds[0] + commentIds[1] + commentIds[2] }}</h3>`
+            }
+        },
+    })
+    new Vue({
+        el: "#app6",
+        data() {
+            return {
+                post: {
+                    author: {
+                        name: '베로니카',
+                        company: '베리디안 다이나믹스'
+                    }
+                },
+            }
+        },
+        components: {
+            "blog-post": {
+                props: blogPost.props,
+                template: `<h3>{{ author.name + ' ' + author.company }}</h3>`
+            }
+        },
+    })
+    new Vue({
+        el: "#app7",
+        data() {
+            return {
+
+                post: {
+                    id: 1,
+                    title: 'My Journey with Vue7'
+                }
+            }
+        },
+        components: {
+            "blog-post": {
+                props: Object.assign({ id: Number }, blogPost.props),
+                template: `<h3 :id=id>{{ title }}</h3>`
+            }
+        },
+    })
+    Vue.component('my-component', {
+        props: {
+            // Basic type check (`null` and `undefined` values will pass any type validation)
+            propA: Number,
+            // Multiple possible types
+            propB: [String, Number],
+            // Required string
+            propC: {
+                type: String,
+                required: true
+            },
+            // Number with a default value
+            propD: {
+                type: Number,
+                default: 100
+            },
+            // Object with a default value
+            propE: {
+                type: Object,
+                // Object or array defaults must be returned from
+                // a factory function
+                default: function () {
+                    return { message: 'hello' }
+                }
+            },
+            // Custom validator function
+            propF: {
+                validator: function (value) {
+                    // The value must match one of these strings
+                    return ['success', 'warning', 'danger'].indexOf(value) !== -1
+                }
+            }
+        },
+        template: `<div :id="propC">{{ propE.message }}</div>`
+    })
+    function Person(firstName, lastName) {
+        this.firstName = firstName
+        this.lastName = lastName
+    }
+    Vue.component('blog-post', {
+        props: {
+            author: new Person
+        },
+        template: `<div> {{ author.firstName + ' ' + author.lastName }}</div>`
+    })
+    Vue.component('base-input', {
+        inheritAttrs: false,
+        props: ['label', 'value'],
+        template: `
+    <label>
+      {{ label }}
+      <input
+        v-bind="$attrs"
+        v-bind:value="value"
+        v-on:input="$emit('input', $event.target.value)"
+      >
+    </label>
+  `
+    })
+    new Vue({
+        el: "#app8",
+        data() {
+            return {
+                hi: "하이2",
+                you: "유2",
+                username: "유3"
+            }
+        }
+    });
+</script>
+
+</html>
