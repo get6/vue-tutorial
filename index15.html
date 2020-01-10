@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <base-checkbox></base-checkbox>
+        <base-checkbox v-model="lovingVue"></base-checkbox>
+        <base-input value="값" label="인풋" v-on:focus.native="onFocus"></base-input>
+        <br>
+        <!-- <text-document v-bind:title="doc.title" v-on:update:title="doc.title = $event"></text-document> -->
+        <br>
+        <text-document v-bind:title.sync="doc.title"></text-document>
+        <text-document v-bind.sync="doc"></text-document>
+    </div>
+</body>
+<script>
+    Vue.component('base-checkbox', {
+        model: {
+            prop: 'checked',
+            event: 'change'
+        },
+        props: {
+            checked: Boolean
+        },
+        template: `
+            <input
+            type="checkbox"
+            v-bind:checked="checked"
+            v-on:change="$emit('change', $event.target.checked)"
+            >
+        `
+    })
+    Vue.component('base-input', {
+        model: {
+            prop: 'value',
+            event: 'input'
+        },
+        props: {
+            label: String,
+            value: String
+        },
+        template: `
+        <label>
+            {{ label }}
+        <input
+            v-bind="$attrs"
+            v-bind:value="value"
+            v-on:input="$emit('input', $event.target.value)"
+        >
+        </label>
+        `
+    });
+    Vue.component('base-input', {
+        inheritAttrs: false,
+        props: ['label', 'value'],
+        computed: {
+            inputListeners: function () {
+                var vm = this
+                // `Object.assign` merges objects together to form a new object
+                return Object.assign({},
+                    // We add all the listeners from the parent
+                    this.$listeners,
+                    // Then we can add custom listeners or override the
+                    // behavior of some listeners.
+                    {
+                        // This ensures that the component works with v-model
+                        input: function (event) {
+                            vm.$emit('input', event.target.value)
+                        },
+                        focus: function (event) {
+                            vm.$emit('focus', event.target.value)
+                        }
+                    }
+                )
+            }
+        },
+        template: `
+    <label>
+      {{ label }}
+      <input
+        v-bind="$attrs"
+        v-bind:value="value"
+        v-on="inputListeners"
+      >
+    </label>
+  `
+    });
+    Vue.component('text-document', {
+        model: {
+
+        },
+        props: ["title"],
+        template: `<input type="text" :value="title" v-on:change="$emit('update', $event.target.value)">`,
+        methods: {
+          
+        }
+    })
+    var vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                lovingVue: true,
+                doc: {
+                    title: "doc"
+                }
+            }
+        },
+        methods: {
+            onFocus() {
+                console.log("onFocus")
+            },
+
+        }
+    })
+</script>
+
+</html>
