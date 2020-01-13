@@ -11,87 +11,33 @@
 
 <body>
     <div id="app">
-        <navigation-link url="/profile">
-            Your Profile
-        </navigation-link>
-        <br>
-        <navigation-link url="/profile">
-            <!-- Font Awesome 아이콘을 추가합시다 -->
-            <span class="fa fa-user"></span>
-            Your Profile
-        </navigation-link>
-        <br>
-        <navigation-link url="/profile">
-            <!-- 컴포넌트로 아이콘을 추가해봅시다 -->
-            <font-awesome-icon name="user"></font-awesome-icon>
-            Your Profile
-        </navigation-link>
-        <br>
-        <navigation-link url="/profile">
-            Logged in as {{ user.name }}
-        </navigation-link>
-        <br>
-        <navigation-link url="/profile">
-            Clicking here will send you to: {{ url }}
-            <!--
-            `url`은 undefined로 나올 겁니다. 이 데이터는 <navigation-link>_로_
-            넘어가지만 <navigation-link> 컴포넌트 _안에_ 정의되어 있지는
-            않으니까요.
-            -->
-        </navigation-link>
-        <br>
-        <submit-button>버트닝</submit-button>
-        <submit-button></submit-button>
-        <br>
-        <base-layout></base-layout>
         <base-layout>
-            <template v-slot:header>
+            <template v-slot:[dynamicslotname]>
+                <h1>Here might be a page dynamic</h1>
+            </template>
+        </base-layout>
+        <base-layout>
+            <template #header>
                 <h1>Here might be a page title</h1>
             </template>
 
             <p>A paragraph for the main content.</p>
             <p>And another one.</p>
 
-            <template v-slot:footer>
+            <template #footer>
                 <p>Here's some contact info</p>
             </template>
         </base-layout>
-        <!-- <current-user user="user"></current-user> -->
-        <current-user :user="user">
-            <template v-slot:default="slotProps">
-                {{ slotProps.user.firstName }}
+        <todo-list v-bind:filtered-todos="todos"></todo-list>
+        <todo-list v-bind:filtered-todos="todos">
+            <template v-slot:todo="{ todo }">
+                <span v-if="todo.isComplete">✓</span>
+                {{ todo.text + "!"}}
             </template>
-        </current-user>
-        <current-user :user="user" v-slot:default="slotProps"></current-user>
-        <current-user :user="user" v-slot:default="slotProps">
-            {{ slotProps.user.firstName }}
-        </current-user>
-        <current-user :user="user" v-slot="slotProps">
-            {{ slotProps.user.firstName }}
-        </current-user>
+        </todo-list>
     </div>
 </body>
 <script>
-    Vue.component('navigation-link', {
-        props: ["url"],
-        template: `<a
-            v-bind:href="url"
-            class="nav-link"
-            >
-            <slot></slot>
-            </a>`
-    });
-    Vue.component('font-awesome-icon', {
-        props: ["name"],
-        template: `<span
-            >{{ name }}
-            </span>`
-    });
-    Vue.component('submit-button', {
-        template: `<button type="submit">
-                <slot>Submit</slot>
-                </button>`
-    });
     Vue.component('base-layout', {
         template: `<div class="container">
                 <header>
@@ -104,34 +50,33 @@
                     <slot name="footer"></slot>
                 </footer>
                 </div>`
-    })
-    Vue.component('current-user', {
-        props: ["user"],
-        template: `<span>
-                <slot v-bind:user="user">
-                    {{ user.lastName }}
-                </slot>
-                </span>`
-    })
-    var vm = new Vue({
+    });
+    Vue.component('todo-list', {
+        props: ["filteredTodos"],
+        template: `<ul>
+                <li
+                    v-for="todo in filteredTodos"
+                    v-bind:key="todo.id"
+                >
+                    <slot name="todo" v-bind:todo="todo">
+                    <!-- 기본값 -->
+                    {{ todo.text }}
+                    </slot>
+                </li>
+                </ul>`
+    });
+    new Vue({
         el: "#app",
         data() {
             return {
-                user: {
-                    lastName: "황",
-                    firstName: "성준",
-                    name: "성준 황"
-                },
-                url: "/index2.html",
-                slotProps: {
-                    user: {
-                        lastName: "황",
-                        firstName: "성준",
-                    }
-                }
+                dynamicslotname: "header",
+                todos: [
+                    { id: 1, text: "JavaScript 배우기", isComplete: true },
+                    { id: 2, text: "Vue 배우기", isComplete: true },
+                    { id: 3, text: "무언가 멋진 것을 만들기", isComplete: true }
+                ]
             }
-        },
-
+        }
     })
 </script>
 
