@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <base-layout>
+            <template v-slot:[dynamicslotname]>
+                <h1>Here might be a page dynamic</h1>
+            </template>
+        </base-layout>
+        <base-layout>
+            <template #header>
+                <h1>Here might be a page title</h1>
+            </template>
+
+            <p>A paragraph for the main content.</p>
+            <p>And another one.</p>
+
+            <template #footer>
+                <p>Here's some contact info</p>
+            </template>
+        </base-layout>
+        <todo-list v-bind:filtered-todos="todos"></todo-list>
+        <todo-list v-bind:filtered-todos="todos">
+            <template v-slot:todo="{ todo }">
+                <span v-if="todo.isComplete">✓</span>
+                {{ todo.text + "!"}}
+            </template>
+        </todo-list>
+    </div>
+</body>
+<script>
+    Vue.component('base-layout', {
+        template: `<div class="container">
+                <header>
+                    <slot name="header"></slot>
+                </header>
+                <main>
+                    <slot></slot>
+                </main>
+                <footer>
+                    <slot name="footer"></slot>
+                </footer>
+                </div>`
+    });
+    Vue.component('todo-list', {
+        props: ["filteredTodos"],
+        template: `<ul>
+                <li
+                    v-for="todo in filteredTodos"
+                    v-bind:key="todo.id"
+                >
+                    <slot name="todo" v-bind:todo="todo">
+                    <!-- 기본값 -->
+                    {{ todo.text }}
+                    </slot>
+                </li>
+                </ul>`
+    });
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                dynamicslotname: "header",
+                todos: [
+                    { id: 1, text: "JavaScript 배우기", isComplete: true },
+                    { id: 2, text: "Vue 배우기", isComplete: true },
+                    { id: 3, text: "무언가 멋진 것을 만들기", isComplete: true }
+                ]
+            }
+        }
+    })
+</script>
+
+</html>
