@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <anchored-heading :level="1">Hello world!</anchored-heading>
+        <anchored-heading-template :level="1">Hello world!</anchored-heading-template>
+    </div>
+</body>
+<script type="text/x-template" id="anchored-heading-template">
+    <h1 v-if="level === 1">
+      <slot></slot>
+    </h1>
+    <h2 v-else-if="level === 2">
+      <slot></slot>
+    </h2>
+    <h3 v-else-if="level === 3">
+      <slot></slot>
+    </h3>
+    <h4 v-else-if="level === 4">
+      <slot></slot>
+    </h4>
+    <h5 v-else-if="level === 5">
+      <slot></slot>
+    </h5>
+    <h6 v-else-if="level === 6">
+      <slot></slot>
+    </h6>
+  </script>
+<script>
+    Vue.component('anchored-heading-template', {
+        template: '#anchored-heading-template',
+        props: {
+            level: {
+                type: Number,
+                required: true
+            }
+        }
+    })
+    Vue.component('anchored-heading', {
+        render: function (createElement) {
+            return createElement(
+                'h' + this.level,   // 태그 이름
+                this.$slots.default // 자식의 배열
+            )
+        },
+        props: {
+            level: {
+                type: Number,
+                required: true
+            }
+        }
+    })
+    new Vue({
+        el: "#app"
+    })
+</script>
+
+
+</html>

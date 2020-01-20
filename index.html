@@ -10,72 +10,36 @@
 </head>
 
 <body>
+    <div id="app">
+        <!-- 중괄호 보간법 -->
+        {{ message | capitalize }}
 
+        <!-- v-bind 표현 -->
+        <div v-bind:id="rawId | formatId">{{rawId}}</div>
+    </div>
 </body>
 <script>
-    // mixin 객체 생성
-    var myMixin = {
-        created: function () {
-            this.hello()
-        },
-        methods: {
-            hello: function () {
-                console.log('hello from mixin!')
-            }
-        }
-    }
-
-    // mixin을 사용할 컴포넌트 정의
-    var Component = Vue.extend({
-        mixins: [myMixin]
+    Vue.filter('formatId', function (value) {
+        if (!value) return ''
+        value = value.toString()
+        return value.charAt(0).toUpperCase() + value.slice(1)
     })
-
-    var component = new Component() // => "hello from mixin!"
-    var mixin = {
-        data: function () {
+    new Vue({
+        el: "#app",
+        data() {
             return {
-                message: 'hello',
-                //foo: 'abc'
+                message: "message",
+                rawId: "rawId",
             }
         },
-        created: function () {
-            console.log('mixin hook called')
-        },
-        methods: {
-            foo: function () {
-                console.log('foo')
-            },
-            conflicting: function () {
-                console.log('from mixin')
-            }
-        }
-    }
-
-    var vm = new Vue({
-        mixins: [mixin],
-        data: function () {
-            return {
-                message: 'goodbye',
-                //bar: 'def'
-            }
-        },
-        created: function () {
-            console.log('component hook called')
-            console.log(this.$data)
-            // => { message: "goodbye", foo: "abc", bar: "def" }
-        },
-        methods: {
-            bar: function () {
-                console.log('bar')
-            },
-            conflicting: function () {
-                console.log('from self')
+        filters: {
+            capitalize: function (value) {
+                if (!value) return ''
+                value = value.toString()
+                return value.charAt(0).toUpperCase() + value.slice(1)
             }
         }
     })
-    vm.foo() // => "foo"
-    vm.bar() // => "bar"
-    vm.conflicting() // => "from self"
 </script>
 
 </html>

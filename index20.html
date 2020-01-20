@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="hook-arguments-example" v-demo:foo.a.b.c="message">
+        <p>Scroll down the page</p>
+        <p v-pin="200">Stick me 200px from the top of the page</p>
+        <div v-demo="{ color: 'white', text: 'hello!' }"></div>
+    </div>
+</body>
+<script>
+    // mixin 객체 생성
+    var myMixin = {
+        created: function () {
+            this.hello()
+        },
+        methods: {
+            hello: function () {
+                console.log('hello from mixin!')
+            }
+        }
+    }
+
+    // mixin을 사용할 컴포넌트 정의
+    var Component = Vue.extend({
+        mixins: [myMixin]
+    })
+
+    var component = new Component() // => "hello from mixin!"
+    var mixin = {
+        data: function () {
+            return {
+                message: 'hello',
+                //foo: 'abc'
+            }
+        },
+        created: function () {
+            console.log('mixin hook called')
+        },
+        methods: {
+            foo: function () {
+                console.log('foo')
+            },
+            conflicting: function () {
+                console.log('from mixin')
+            }
+        }
+    }
+
+    var vm = new Vue({
+        mixins: [mixin],
+        data: function () {
+            return {
+                message: 'goodbye',
+                //bar: 'def'
+            }
+        },
+        created: function () {
+            console.log('component hook called')
+            console.log(this.$data)
+            // => { message: "goodbye", foo: "abc", bar: "def" }
+        },
+        methods: {
+            bar: function () {
+                console.log('bar')
+            },
+            conflicting: function () {
+                console.log('from self')
+            }
+        }
+    })
+    vm.foo() // => "foo"
+    vm.bar() // => "bar"
+    vm.conflicting() // => "from self"
+
+    Vue.directive('demo', {
+        bind: function (el, binding, vnode) {
+            var s = JSON.stringify
+            el.innerHTML =
+                'name: ' + s(binding.name) + '<br>' +
+                'value: ' + s(binding.value) + '<br>' +
+                'expression: ' + s(binding.expression) + '<br>' +
+                'argument: ' + s(binding.arg) + '<br>' +
+                'modifiers: ' + s(binding.modifiers) + '<br>' +
+                'vnode keys: ' + Object.keys(vnode).join(', ')
+        }
+    })
+
+    Vue.directive('color-swatch', function (el, binding) {
+        el.style.backgroundColor = binding.value
+    })
+
+    Vue.directive('demo', function (el, binding) {
+        console.log(binding.value.color) // => "white"
+        console.log(binding.value.text)  // => "hello!"
+    })
+
+    Vue.directive('pin', {
+        bind: function (el, binding, vnode) {
+            el.style.position = 'fixed'
+            el.style.top = binding.value + 'px'
+        }
+    })
+
+    new Vue({
+        el: '#hook-arguments-example',
+        data: {
+            message: 'hello!',
+            test: {
+                a: false,
+                b: false,
+                c: false
+
+            }
+        }
+    })
+
+</script>
+
+</html>
